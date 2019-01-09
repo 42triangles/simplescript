@@ -1,0 +1,8 @@
+[package]
+name = "simplescript"
+version = "0.1.0"
+authors = ["42triangles <42triangles@tutanota.com>"]
+edition = "2018"
+
+[dependencies]
+smallvec = { "version" = "0.6.7", "features" = ["union"] }
