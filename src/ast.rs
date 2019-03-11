@@ -1,7 +1,7 @@
 use std::ops;
 
 #[derive(Clone, Copy, PartialEq, Debug)]
-pub enum Literal<S = String> {
+pub enum Literal<S: ops::Deref<str> = String> {
     Integer(i64),
     Float(f64),
     Char(char),
@@ -14,19 +14,19 @@ pub enum Literal<S = String> {
 /// the potentially many or missing unary and the one binary (unless it's the first element in the operator
 /// expression, in which case there would be none) operators before it
 #[derive(Clone, PartialEq, Debug)]
-pub struct WithOperator<T, S = String> {
+pub struct WithOperator<T, S: ops::Deref<str> = String> {
     pub operators_before: Vec<S>,
     pub value: T,
 }
 
 #[derive(Clone, PartialEq, Debug)]
-pub struct TypeInfo<S> {
+pub struct TypeInfo<S: ops::Deref<str>> {
     pub name: S,
     pub args: Vec<TypeInfo<S>>,
 }
 
 #[derive(Clone, PartialEq, Debug)]
-pub struct MaybeTyped<S = String> {
+pub struct MaybeTyped<S: ops::Deref<str> = String> {
     pub name: S,
     pub type_info: Option<TypeInfo<S>>,
 }
@@ -56,7 +56,7 @@ pub struct MaybeTyped<S = String> {
 /// # ... (the other forms can be inferred)
 /// ```
 #[derive(Clone, PartialEq, Debug)]
-pub struct PartialBlock<T, S = String> {
+pub struct PartialBlock<T, S: ops::Deref<str> = String> {
     pub keyword: S,
     pub ident: Option<S>,
     pub binds: Vec<MaybeTyped<S>>,
@@ -79,14 +79,14 @@ pub struct PartialBlock<T, S = String> {
 /// )
 /// ```
 #[derive(Clone, PartialEq, Debug)]
-pub enum Statement<S = String> {
+pub enum Statement<S: ops::Deref<str> = String> {
     Expression(Ast<S>),
     Set(MaybeTyped<S>, PartialAst<S>),
     Block(Block<S>),
 }
 
 #[derive(Clone, PartialEq, Debug)]
-pub enum PartialAst<T, S = String> {
+pub enum PartialAst<T, S: ops::Deref<str> = String> {
     Identifier(S),
     Literal(Literal<S>),
     OperatorString(Vec<WithOperator<T, S>>),
@@ -94,7 +94,7 @@ pub enum PartialAst<T, S = String> {
     Statements(Vec<Statement<S>>),
 }
 
-impl<T, S> PartialAst<T, S> {
+impl<T, S: ops::Deref<str>> PartialAst<T, S> {
     pub fn transform<U, F: FnMut(&T) -> U>(&self, mut conversion: F) -> PartialAst<U, S> where S: Clone {
         match *self {
             PartialAst::Identifier(ref ident) => PartialAst::Identifier(ident.clone()),
@@ -107,15 +107,15 @@ impl<T, S> PartialAst<T, S> {
 }
 
 #[derive(Clone, PartialEq, Debug)]
-pub struct Ast<S=String>(pub PartialAst<Ast<S>, S>);
+pub struct Ast<S: ops::Deref<str> = String>(pub PartialAst<Ast<S>, S>);
 
-impl<S> From<Ast<S>> for PartialAst<Ast<S>, S> {
+impl<S: ops::Deref<str>> From<Ast<S>> for PartialAst<Ast<S>, S> {
     fn from(this: Ast<S>) -> Self {
         this.0
     }
 }
 
-impl<S> ops::Deref for Ast<S> {
+impl<S: ops::Deref<str>> ops::Deref for Ast<S> {
     type Target = PartialAst<Ast<S>, S>;
 
     fn deref(&self) -> &PartialAst<Ast<S>, S> {
@@ -123,13 +123,13 @@ impl<S> ops::Deref for Ast<S> {
     }
 }
 
-impl<S> ops::DerefMut for Ast<S> {
+impl<S: ops::Deref<str>> ops::DerefMut for Ast<S> {
     fn deref_mut(&mut self) -> &mut PartialAst<Ast<S>, S> {
         &mut self.0
     }
 }
 
-impl<S> PartialAst<Ast<S>, S> {
+impl<S: ops::Deref<str>> PartialAst<Ast<S>, S> {
     fn eval_impl<T, F: FnMut(PartialAst<T, S>) -> T>(&self, conversion: &mut F) -> T where S: Clone {
         let partial = self.transform(|part| part.eval(&mut*conversion));
         conversion(partial)
@@ -140,4 +140,4 @@ impl<S> PartialAst<Ast<S>, S> {
     }
 }
 
-pub type Block<S = String> = PartialBlock<Ast<S>, S>;
+pub type Block<S: ops::Deref<str> = String> = PartialBlock<Ast<S>, S>;
