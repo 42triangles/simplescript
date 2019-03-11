@@ -1,5 +1,3 @@
-#![feature(never_type, custom_attribute)]
-
 #[macro_use]  // TODO: Remove this as soon as `nom` gets its macros in order.
 extern crate nom;
 
