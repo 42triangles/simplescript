@@ -5,4 +5,10 @@ authors = ["42triangles <42triangles@tutanota.com>"]
 edition = "2018"
 
 [dependencies]
-smallvec = { "version" = "0.6.7", "features" = ["union"] }
+# smallvec = { "version" = "0.6.7", "features" = ["union"] }
+nom = "4"
+nom_locate = "0.3.1"
+cache-size = "0.3.4"
+
+[dev-dependencies]
+rand = "0.6.4"

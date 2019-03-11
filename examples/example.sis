@@ -1,0 +1,26 @@
+def fac(n: int):  # `:` makes it a block
+    if n <= 1:
+        return 1;  # `;` makes it a block without code
+    else:
+        return n * fac(n - 1);
+
+# this generates the following AST
+# [
+#     Block("def", Some("fac"), [("n", Some("int"))], [], [
+#         Block("if", None, [], [
+#             OperatorVec([
+#                 ([], Identifier("n")),
+#                 (["<="], Literal(Integer(1))),
+#             ])
+#         ], [
+#             Block("return", None, [], [
+#                 Literal(Integer(1))
+#             ], [])
+#         ]),
+#         Block("else", None, [], [], [
+#             Block("return", None, [], [
+#                 Literal(Integer(1))
+#             ], [])
+#         ]),
+#     ])
+# ]

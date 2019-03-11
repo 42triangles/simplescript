@@ -1,8 +1,12 @@
-#![feature(never_type)]
+#![feature(never_type, custom_attribute)]
 
-pub mod base;
+#[macro_use]  // TODO: Remove this as soon as `nom` gets its macros in order.
+extern crate nom;
 
-#[cfg(test)]
+pub mod ast;
+pub mod parse;
+
+#[cfg(test)]  // TODO: Actual test coverage
 mod tests {
     #[test]
     fn it_works() {
