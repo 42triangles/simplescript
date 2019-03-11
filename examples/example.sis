@@ -1,8 +1,8 @@
 def fac(n: int):  # `:` makes it a block
     if n <= 1:
-        return 1;  # `;` makes it a block without code
+        return <- 1;  # `;` makes it a block without code
     else:
-        return n * fac(n - 1);
+        return <- n * fac(n - 1);
 
 # this generates the following AST
 # [
